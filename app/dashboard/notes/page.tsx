@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/dashboard/app-sidebar"
 import { Topbar } from "@/components/dashboard/topbar"
 import { Separator } from "@/components/ui/separator"
+import { NotionEditor } from '@/components/tiptap-templates/notion-like/notion-like-editor'
 import {
   SidebarInset,
   SidebarProvider,
@@ -20,14 +21,7 @@ export default function Page() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <Topbar />
-        {/* <div className="flex flex-1 flex-col gap-4 p-4">
-          {Array.from({ length: 24 }).map((_, index) => (
-            <div
-              key={index}
-              className="bg-muted/50 aspect-video h-12 w-full rounded-lg"
-            />
-          ))}
-        </div> */}
+          <NotionEditor room="my-document-room" placeholder="Start writing..." />
       </SidebarInset>
     </SidebarProvider>
   )
