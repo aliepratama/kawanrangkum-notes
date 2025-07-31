@@ -1,7 +1,9 @@
 "use client"
 
-import * as React from "lucide-react"
+import * as React from "react"
+import * as LucideReact from "lucide-react"
 
+import { NavFavorite } from "@/components/sidebar/sidebar-favorite"
 import { NavShared } from "@/components/sidebar/sidebar-shared"
 import { NavPrivate } from "@/components/sidebar/sidebar-private"
 import { NavMain } from "@/components/sidebar/sidebar-main"
@@ -27,96 +29,80 @@ const data = {
     {
       title: "Cari",
       url: "#",
-      icon: React.Search,
+      icon: LucideReact.Search,
     },
     {
       title: "Beranda",
       url: "/dashboard",
-      icon: React.Home,
+      icon: LucideReact.Home,
     },
     {
       title: "Pesan",
       url: "/dashboard/messages",
-      icon: React.Inbox,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: React.Camera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      icon: LucideReact.Inbox,
     },
   ],
   navSecondary: [
     {
       title: "Pengaturan",
       url: "#",
-      icon: React.Settings,
+      icon: LucideReact.Settings,
     },
     {
       title: "Sampah",
       url: "#",
-      icon: React.Trash2,
+      icon: LucideReact.Trash2,
+    },
+  ],
+  NavFavorite: [
+    {
+      name: "Big Data (B)",
+      url: "/dashboard/notes",
+      icon: LucideReact.Database,
     },
   ],
   navShared: [
     {
       name: "Big Data (B)",
       url: "/dashboard/notes",
-      icon: React.Database,
-    },
-    {
-      name: "RPL - Metode Agile",
-      url: "#",
-      icon: React.FileCode,
-    },
-    {
-      name: "Laporan Akhir Machine Learning",
-      url: "#",
-      icon: React.FileSpreadsheet,
+      icon: LucideReact.Database,
     },
     {
       name: "Design Thinking - Theory",
       url: "#",
-      icon: React.Frame,
+      icon: LucideReact.Frame,
     },
     {
       name: "Penelitian Kuantitatif",
       url: "#",
-      icon: React.FileSearch2,
+      icon: LucideReact.FileSearch2,
+    },
+    {
+      name: "Matematika Diskrit (G)",
+      url: "#",
+      icon: LucideReact.Pi,
     },
   ],
   navPrivate: [
     {
-      name: "Big Data (B)",
-      url: "/dashboard/notes",
-      icon: React.Database,
-    },
-    {
       name: "RPL - Metode Agile",
       url: "#",
-      icon: React.FileCode,
+      icon: LucideReact.FileCode,
+    },
+    {
+      name: "Prinsip Design",
+      url: "#",
+      icon: LucideReact.Frame,
     },
     {
       name: "Laporan Akhir Machine Learning",
       url: "#",
-      icon: React.FileSpreadsheet,
+      icon: LucideReact.FileSpreadsheet,
     },
     {
       name: "Design Thinking - Theory",
       url: "#",
-      icon: React.Frame,
+      icon: LucideReact.Frame,
     },
   ],
 }
@@ -126,9 +112,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <NavUser user={data.user} />
+        <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavFavorite items={data.NavFavorite} />
         <NavShared items={data.navShared} />
         <NavPrivate items={data.navPrivate} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />

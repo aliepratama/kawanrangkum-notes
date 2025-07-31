@@ -1,8 +1,100 @@
+"use client"
+import * as React from "react"
+
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Badge } from "@/components/ui/badge"
 
-export function SiteHeader() {
+import {
+  ArrowDown,
+  ArrowUp,
+  Bell,
+  Copy, 
+  CornerUpLeft,
+  CornerUpRight,
+  Link,
+  MoreHorizontal,
+  Star,
+  Trash2,
+} from "lucide-react"
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
+
+const data = [
+  [
+    {
+      label: "Salin Tautan",
+      icon: Link,
+    },
+    {
+      label: "Duplikat",
+      icon: Copy,
+    },
+    {
+      label: "Pindahkan ke",
+      icon: CornerUpRight,
+    },
+    {
+      label: "Pindahkan ke Sampah",
+      icon: Trash2,
+    },
+  ],
+  [
+    {
+      label: "Urungkan",
+      icon: CornerUpLeft,
+    },
+    {
+      label: "Notifikasi",
+      icon: Bell,
+    },
+  ],
+  [
+    {
+      label: "Impor",
+      icon: ArrowUp,
+    },
+    {
+      label: "Ekspor",
+      icon: ArrowDown,
+    },
+  ],
+]
+
+export function Topbar() {
+  const [isOpen, setIsOpen] = React.useState(false)
+  React.useEffect(() => {
+    setIsOpen(false)
+  }, [])
+  const [isFavorited, setIsFavorited] = React.useState(true)
+
+  const handleFavoriteClick = () => {
+    setIsFavorited(!isFavorited)
+  }
+
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
@@ -11,18 +103,100 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        {/* <h1 className="text-base font-medium">Documents</h1> */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="line-clamp-1">
+                Big Data (B)
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="line-clamp-1">
+                <Badge variant="outline">
+                  Dibagikan
+                </Badge>
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
             <a
-              href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
+              href="#"
               rel="noopener noreferrer"
               target="_blank"
               className="dark:text-foreground"
             >
-              GitHub
+              Bagikan
             </a>
           </Button>
+          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
+            <a
+              href="#"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="dark:text-foreground"
+            >
+              Flashcard
+            </a>
+          </Button>
+          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
+            <a
+              href="#"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="dark:text-foreground"
+            >
+              Mindmapping
+            </a>
+          </Button>
+          <Button
+            onClick={handleFavoriteClick}
+            variant="ghost"
+            size="icon"
+            className={cn("h-7 w-7", 
+            isFavorited
+            ? "text-yellow-500 hover:text-yellow-500"
+            : ""
+            )}
+          >
+            <Star className={isFavorited ? "fill-current" : ""} />
+          </Button>
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="data-[state=open]:bg-accent h-7 w-7"
+              >
+                <MoreHorizontal />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-56 overflow-hidden rounded-lg mt-1 p-0"
+              align="end"
+            >
+              <Sidebar collapsible="none" className="bg-transparent">
+                <SidebarContent>
+                  {data.map((group, index) => (
+                    <SidebarGroup key={index} className="border-b last:border-none">
+                      <SidebarGroupContent className="gap-0">
+                        <SidebarMenu>
+                          {group.map((item, index) => (
+                            <SidebarMenuItem key={index}>
+                              <SidebarMenuButton>
+                                <item.icon /> <span>{item.label}</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          ))}
+                        </SidebarMenu>
+                      </SidebarGroupContent>
+                    </SidebarGroup>
+                  ))}
+                </SidebarContent>
+              </Sidebar>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </header>
