@@ -4,6 +4,8 @@ import * as React from "react"
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
 import type { Doc as YDoc } from "yjs"
 import type { TiptapCollabProvider } from "@tiptap-pro/provider"
+import { JSONContent } from "@tiptap/react";
+import { Topbar } from "@/components/dashboard/topbar";
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
@@ -69,6 +71,7 @@ import { NotionToolbarFloating } from "@/components/tiptap-templates/notion-like
 export interface NotionEditorProps {
   room: string
   placeholder?: string
+  defaultValue?: JSONContent | string;
 }
 
 export interface EditorProviderProps {
@@ -76,6 +79,7 @@ export interface EditorProviderProps {
   ydoc: YDoc
   placeholder?: string
   aiToken: string | null
+  defaultValue?: JSONContent | string;
 }
 
 /**
@@ -154,13 +158,39 @@ export function EditorContentArea() {
  * Component that creates and provides the editor instance
  */
 export function EditorProvider(props: EditorProviderProps) {
-  const { provider, ydoc, placeholder = "Start writing...", aiToken } = props
+  const { provider, ydoc, placeholder = "Start writing...", aiToken, defaultValue } = props
 
   const { user } = useUser()
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // Kirim file ke API Route Next.js Anda
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload gagal: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      // Kembalikan URL dari Cloudinary
+      return data.url;
+    } catch (error) {
+      console.error("Gagal mengupload gambar:", error);
+      // Lempar error agar bisa ditangani oleh properti `onError`
+      throw error;
+    }
+  };
 
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
+    // content: defaultValue || `<h1>${placeholder || ''}</h1>`,
     editorProps: {
       attributes: {
         class: "notion-like-editor",
@@ -236,6 +266,15 @@ export function EditorProvider(props: EditorProviderProps) {
     ],
   })
 
+  React.useEffect(() => {
+    // Jika editor sudah ada, defaultValue ada, dan editor masih kosong
+    if (editor && defaultValue && editor.isEmpty) {
+      // Isi editor dengan konten default
+      // Argumen kedua `false` mencegah event 'update' agar tidak terkirim
+      editor.commands.setContent(defaultValue, false);
+    }
+  }, [editor, defaultValue]);
+
   if (!editor) {
     return <LoadingSpinner />
   }
@@ -243,7 +282,8 @@ export function EditorProvider(props: EditorProviderProps) {
   return (
     <div className="notion-like-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <NotionEditorHeader />
+        <Topbar />
+        {/* <NotionEditorHeader /> */}
         <EditorContentArea />
       </EditorContext.Provider>
     </div>
@@ -256,13 +296,18 @@ export function EditorProvider(props: EditorProviderProps) {
 export function NotionEditor({
   room,
   placeholder = "Start writing...",
+  defaultValue,
 }: NotionEditorProps) {
+  // const editor = useEditor({
+  //   content: defaultValue || `<h1>${placeholder || ''}</h1>`, 
+  //   immediatelyRender: false, 
+  // });
   return (
     <UserProvider>
       <AppProvider>
         <CollabProvider room={room}>
           <AiProvider>
-            <NotionEditorContent placeholder={placeholder} />
+            <NotionEditorContent placeholder={placeholder} defaultValue={defaultValue} />
           </AiProvider>
         </CollabProvider>
       </AppProvider>
@@ -273,7 +318,7 @@ export function NotionEditor({
 /**
  * Internal component that handles the editor loading state
  */
-export function NotionEditorContent({ placeholder }: { placeholder?: string }) {
+export function NotionEditorContent({ placeholder, defaultValue }: { placeholder?: string, defaultValue?: JSONContent | string }) {
   const { provider, ydoc } = useCollab()
   const { aiToken } = useAi()
 
@@ -287,6 +332,7 @@ export function NotionEditorContent({ placeholder }: { placeholder?: string }) {
       ydoc={ydoc}
       placeholder={placeholder}
       aiToken={aiToken}
+      defaultValue={defaultValue}
     />
   )
 }

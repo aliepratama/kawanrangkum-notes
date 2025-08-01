@@ -24,14 +24,6 @@ export function NotionEditorHeader() {
           <UndoRedoButton action="undo" />
           <UndoRedoButton action="redo" />
         </ButtonGroup>
-
-        <Separator />
-
-        <ThemeToggle />
-
-        <Separator />
-
-        <CollaborationUsers />
       </div>
     </header>
   )

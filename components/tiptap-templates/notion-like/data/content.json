@@ -400,7 +400,7 @@
     {
       "type": "image",
       "attrs": {
-        "src": "/images/tiptap-ui-placeholder-image.jpg",
+        "src": "https://res.cloudinary.com/dlgvx5ru0/image/upload/v1754024419/qgfd0guh3700xt4cfkqv.jpg",
         "alt": "Screenshot 2025-02-23 at 19.22.27",
         "title": "Screenshot 2025-02-23 at 19.22.27"
       }
