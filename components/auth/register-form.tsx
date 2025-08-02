@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,26 +12,44 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { register } from '@/app/auth/signup/actions'
 import Link from 'next/link'
-import ErrorDialog from './error'
+import { useAuthStore } from '@/stores/auth-store'
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
+  const { register, loading, error, clearError } = useAuthStore()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName] = useState('')
+  const [validationError, setValidationError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
+    clearError()
+    setValidationError(null)
 
-    const formData = new FormData(e.currentTarget as HTMLFormElement)
-    const result = await register(formData)
-    if (result) {
-      setError(result)
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setValidationError('Passwords do not match')
+      return
+    }
+
+    try {
+      await register(email, password, name)
+      // Show success message or redirect to login
+      router.push(
+        '/auth/login?message=Registration successful! Please check your email.'
+      )
+    } catch (error) {
+      // Error is already handled in the store
     }
   }
+
+  const displayError = validationError || error
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -50,8 +69,9 @@ export function RegisterForm({
                   <Input
                     id="name"
                     type="text"
-                    name="name"
                     placeholder="Nama Lengkap"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     required
                   />
                 </div>
@@ -60,8 +80,9 @@ export function RegisterForm({
                   <Input
                     id="email"
                     type="email"
-                    name="email"
                     placeholder="seseorang@mail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -72,7 +93,8 @@ export function RegisterForm({
                   <Input
                     id="password"
                     type="password"
-                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
@@ -81,12 +103,13 @@ export function RegisterForm({
                   <Input
                     id="confirm-password"
                     type="password"
-                    name="confirm-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Register
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Registering...' : 'Register'}
                 </Button>
               </div>
               <div className="text-center text-sm">
@@ -102,7 +125,9 @@ export function RegisterForm({
           </form>
         </CardContent>
       </Card>
-      <ErrorDialog error={error} setError={setError} />
+      {displayError && (
+        <div className="text-red-500 text-sm text-center">{displayError}</div>
+      )}
     </div>
   )
 }

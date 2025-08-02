@@ -1,8 +1,21 @@
-import { GalleryVerticalEnd } from "lucide-react"
+'use server'
 
-import { RegisterForm } from "@/components/auth/register-form"
+import { GalleryVerticalEnd } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
+import { RegisterForm } from '@/components/auth/register-form'
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+  if (user) {
+    redirect('/dashboard')
+  }
+
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">

@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,26 +12,29 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { login } from '@/app/auth/login/actions'
 import Link from 'next/link'
-import ErrorDialog from './error'
+import { useAuthStore } from '@/stores/auth-store'
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
+  const { login, loading, error, clearError } = useAuthStore()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
+    clearError()
 
-    const formData = new FormData(e.currentTarget as HTMLFormElement)
-    const result = await login(formData)
-
-    if (result) {
-    setError(result)
-  }
+    try {
+      await login(email, password)
+      router.push('/dashboard')
+      router.refresh() // Refresh to update server components
+    } catch (error) {
+      // Error is already handled in the store
+    }
   }
 
   return (
@@ -52,29 +56,25 @@ export function LoginForm({
                     id="email"
                     type="email"
                     placeholder="seseorang@mail.com"
-                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <div className="grid gap-3">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    {/* <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a> */}
                   </div>
                   <Input
                     id="password"
                     type="password"
-                    name="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Login
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Logging in...' : 'Login'}
                 </Button>
               </div>
               <div className="text-center text-sm">
@@ -90,7 +90,9 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      <ErrorDialog error={error} setError={setError} />
+      {error && (
+        <div className="text-red-500 text-sm text-center">{error}</div>
+      )}
     </div>
   )
 }
