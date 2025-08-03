@@ -26,6 +26,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useRouter } from 'next/navigation'
 
 const iconMap = {
   database: Database,
@@ -39,35 +40,45 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note }: NoteCardProps) {
-  const { toggleFavourite, deleteNote } = useNoteStore()
-  const IconComponent = iconMap[note.icon as keyof typeof iconMap] || FileCode
+  const router = useRouter()
+  const { toggleFavourite, deleteNoteById } = useNoteStore()
   
   const handleOpen = () => {
-    // Navigate to note detail page
+    router.push(`/notes/${note.id}`)
   } 
 
-  const handleShare = () => {
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation()
     // Implement share functionality
   }
 
-  const handleDelete = () => {
-    // Delete the note
-    deleteNote(note.id)
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    deleteNoteById(note.id)
+  }
+
+  const handleToggleFavourite = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    toggleFavourite(note.id)
+  }
+
+  const handleDropdownClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
   }
 
   return (
-    <Card className="@container/card">
+    <Card className="@container/card cursor-pointer" onClick={() => router.push(`/notes/${note.id}`)}>
       <CardHeader>
         <CardTitle className="flex justify-between font-semibold tabular-nums">
           <div>
-            <IconComponent className="h-12 w-12 @[250px]/card:h-12 @[250px]/card:w-12" />
+            <span className='text-2xl'>{note.icon}</span>
           </div>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => toggleFavourite(note.id)}
-              className="p-1"
+              onClick={handleToggleFavourite}
+              className="p-1 z-10 cursor-pointer"
             >
               <Star 
                 className={`h-4 w-4 ${note.is_favourite ? 'fill-current text-yellow-500' : ''}`} 
@@ -80,6 +91,7 @@ export function NoteCard({ note }: NoteCardProps) {
                   variant="ghost"
                   size="sm"
                   className="p-1"
+                  onClick={handleDropdownClick}
                 >
                   <EllipsisVertical className="h-4 w-4" />
                 </Button>

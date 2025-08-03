@@ -17,11 +17,6 @@ const data = {
       icon: Home,
     },
     {
-      title: 'Cari',
-      url: '/search',
-      icon: Search,
-    },
-    {
       title: 'Pengaturan',
       url: '/settings',
       icon: Settings,

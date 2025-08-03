@@ -11,8 +11,26 @@ import {
 import { NoteCard } from './note-card'
 
 function CreateNoteCard() {
+  const { createNote } = useNoteStore()
+
+  const handleCreateNote = async () => {
+    try {
+      await createNote({
+        title: 'Catatan Baru',
+        icon: '📝',
+        is_public: false,
+        is_favourite: false,
+      })
+    } catch (error) {
+      console.error('Failed to create note:', error)
+    }
+  }
+
   return (
-    <Card className="@container/card flex flex-col items-center justify-center gap-2">
+    <Card 
+      className="@container/card flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors"
+      onClick={handleCreateNote}
+    >
       <CardHeader className="w-full justify-center">
         <CardTitle className="font-semibold tabular-nums">
           <CircleFadingPlus className="h-12 w-12 @[250px]/card:h-12 @[250px]/card:w-12" />

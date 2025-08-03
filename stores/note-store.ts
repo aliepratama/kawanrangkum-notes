@@ -9,6 +9,7 @@ export type Note = {
   is_public: boolean
   is_favourite: boolean
   owner_id: string
+  content?: any // Add content field
 }
 
 export type NoteFilter = 'all' | 'public' | 'private' | 'favourite'
@@ -32,6 +33,7 @@ export type NoteActions = {
   deleteNoteById: (id: string) => Promise<void>
   getFilteredNotes: (filter: NoteFilter) => Note[]
   toggleFavourite: (id: string) => Promise<void>
+  updateNoteContent: (id: string, content: any) => Promise<void>
 }
 
 export type NoteStore = NoteState & NoteActions
@@ -154,7 +156,7 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
     } catch (error) {
       set({ 
         error: error instanceof Error ? error.message : 'Unknown error',
-        loading: false 
+        loading: false
       })
     }
   },
@@ -207,5 +209,28 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
     await get().updateNoteById(id, updates)
     const notes = get().notes.find(n => n.id === id)
     console.log('Toggling favourite for note:', notes)
+  },
+
+  updateNoteContent: async (id: string, content: any) => {
+    try {
+      const supabase = createClient()
+      
+      const { error } = await supabase
+        .from('notes')
+        .update({ content })
+        .eq('id', id)
+
+      if (error) {
+        throw new Error('Failed to update note content')
+      }
+
+      // Optionally update local state
+      get().updateNote(id, { content })
+    } catch (error) {
+      console.error('Failed to save note content:', error)
+      set({ 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      })
+    }
   },
 }))

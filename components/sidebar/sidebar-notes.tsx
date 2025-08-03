@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import Link from 'next/link'
 
 const iconMap = {
   database: FileText,
@@ -40,7 +41,7 @@ export function NavNotes() {
               return (
                 <SidebarMenuItem key={note.id}>
                   <SidebarMenuButton asChild>
-                    <a
+                    <Link
                       href={`/notes/${note.id}`}
                       className="flex items-center gap-2"
                     >
@@ -53,7 +54,7 @@ export function NavNotes() {
                           <Lock className="h-3 w-3" />
                         )}
                       </div>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )
@@ -79,7 +80,7 @@ export function NavNotes() {
               return (
                 <SidebarMenuItem key={note.id}>
                   <SidebarMenuButton asChild>
-                    <a
+                    <Link
                       href={`/notes/${note.id}`}
                       className="flex items-center gap-2"
                     >
@@ -95,7 +96,7 @@ export function NavNotes() {
                           <Lock className="h-3 w-3" />
                         )}
                       </div>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )

@@ -71,11 +71,36 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       })
 
       if (error) {
-        set({ error: error.message, loading: false })
+        set({ error: "Email sudah digunakan", loading: false })
         throw new Error(error.message)
       }
 
-      set({ loading: false })
+      // Check if profile already exists before inserting
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', data.user?.id)
+        .single()
+
+      if (!existingProfile) {
+        const { error: insertError } = await supabase.from('profiles').insert({
+          id: data.user?.id,
+          username: `${name.trim().toLowerCase().replace(/\s+/g, '-')}-${Date.now().toString().slice(-6)}`,
+          full_name: name,
+        })
+
+        if (insertError) {
+          set({ error: "Server error", loading: false })
+          throw new Error(insertError.message)
+        }
+      }
+
+      await supabase.from('profiles').update({
+        username: `${name.trim().toLowerCase().replace(/\s+/g, '-')}-${Date.now().toString().slice(-6)}`,
+          full_name: name,
+      }).eq('id', data.user?.id)
+
+      set({ user: data.user, loading: false })
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : 'Registration failed',

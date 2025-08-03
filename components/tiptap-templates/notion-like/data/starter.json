@@ -1,0 +1,36 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "heading",
+      "attrs": {
+        "textAlign": null,
+        "level": 1
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Silahkan edit catatan baru ini "
+        },
+        {
+          "type": "emoji",
+          "attrs": {
+            "name": "sparkles"
+          }
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "attrs": {
+        "textAlign": null
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Anda bisa memulai dengan mengetikkan '/' untuk melihat daftar perintah yang tersedia. "
+        }
+      ]
+    }
+  ]
+}

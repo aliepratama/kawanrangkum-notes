@@ -2,23 +2,27 @@
 
 import { AppSidebar } from '@/components/dashboard/app-sidebar'
 import { FilterTabs } from '@/components/dashboard/filter-last-activity'
+import { SearchPopover } from '@/components/dashboard/search-popover'
 import { NoteProvider } from '@/components/providers/note-provider'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
-import Link from 'next/link'
 import { useAuthStore } from '@/stores/auth-store'
+import { useNoteStore, type Note } from '@/stores/note-store'
+import { useSearchShortcut } from '@/hooks/use-search-shortcut'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function DashboardPage() {
   const { isSignedIn, user, initialize } = useAuthStore()
+  const { fetchNotes } = useNoteStore()
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
+  const { isSearchOpen, setIsSearchOpen } = useSearchShortcut()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -32,6 +36,9 @@ export default function DashboardPage() {
           router.push('/auth/login')
           return
         }
+
+        // Fetch notes after authentication is confirmed
+        await fetchNotes()
       } catch (error) {
         console.error('Auth check failed:', error)
         router.push('/auth/login')
@@ -41,13 +48,20 @@ export default function DashboardPage() {
     }
 
     checkAuth()
-  }, [isSignedIn, router, initialize])
+  }, [isSignedIn, router, initialize, fetchNotes])
+
+  const handleSelectNote = (note: Note) => {
+    // Handle note selection - navigate to note or open in editor
+    console.log('Selected note:', note)
+    // You can navigate to the note editor page here
+    // router.push(`/dashboard/notes/${note.id}`)
+  }
 
   // Show loading while checking authentication
   if (isChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+        <div className="text-lg">Memuat...</div>
       </div>
     )
   }
@@ -68,7 +82,7 @@ export default function DashboardPage() {
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+        <header className="flex h-[--header-height] shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-[--header-height]">
           <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
             <SidebarTrigger className="-ml-1" />
             <Separator
@@ -76,7 +90,15 @@ export default function DashboardPage() {
               className="mx-2 data-[orientation=vertical]:h-4"
             />
             <div className="ml-auto flex items-center gap-2">
-              {/* Header elements in row */}
+              <div className="w-64">
+                <SearchPopover
+                  open={isSearchOpen}
+                  onOpenChange={setIsSearchOpen}
+                  onSelectNote={handleSelectNote}
+                />
+              </div>
+              {/* Add theme toggle to dashboard header */}
+              <ThemeToggle variant="dropdown" size="sm" />
             </div>
           </div>
         </header>
