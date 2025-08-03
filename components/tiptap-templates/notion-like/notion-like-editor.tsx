@@ -6,6 +6,8 @@ import type { Doc as YDoc } from "yjs"
 import type { TiptapCollabProvider } from "@tiptap-pro/provider"
 import { JSONContent } from "@tiptap/react";
 import { Topbar } from "@/components/dashboard/topbar";
+import { Comments } from '@tiptap-pro/extension-comments'
+import { CommentSidebar } from '@/components/tiptap-ui/comment-sidebar'
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
@@ -22,7 +24,7 @@ import { Superscript } from "@tiptap/extension-superscript"
 import { Subscript } from "@tiptap/extension-subscript"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Mathematics } from "@tiptap/extension-mathematics"
-import { Ai } from "@tiptap-pro/extension-ai"
+// import { Ai } from "@tiptap-pro/extension-ai"
 import { UniqueID } from "@tiptap/extension-unique-id"
 import { Emoji, gitHubEmojis } from "@tiptap/extension-emoji"
 
@@ -130,7 +132,7 @@ export function EditorContentArea() {
   ])
 
   if (!editor) {
-    return null
+    return null 
   }
 
   return (
@@ -205,9 +207,19 @@ export function EditorProvider(props: EditorProviderProps) {
         },
         link: { openOnClick: false },
       }),
+      Collaboration.configure({
+        document: ydoc,
+      }),
+      // CollaborationCaret.configure({
+      //   provider,
+      //   user: { id: user.id, name: user.name, color: user.color },
+      // }),
+      // Comments.configure({}),
+      // Comments.configure({
+      //   collaboration: true,
+      // }),
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
-      Collaboration.configure({ document: ydoc }),
       CollaborationCaret.configure({
         provider,
         user: { id: user.id, name: user.name, color: user.color },
@@ -243,26 +255,26 @@ export function EditorProvider(props: EditorProviderProps) {
       UniqueID,
       Typography,
       UiState,
-      Ai.configure({
-        appId: TIPTAP_AI_APP_ID,
-        token: aiToken || undefined,
-        autocompletion: false,
-        showDecorations: true,
-        hideDecorationsOnStreamEnd: false,
-        onLoading: (context) => {
-          context.editor.commands.aiGenerationSetIsLoading(true)
-          context.editor.commands.aiGenerationHasMessage(false)
-        },
-        onChunk: (context) => {
-          context.editor.commands.aiGenerationSetIsLoading(true)
-          context.editor.commands.aiGenerationHasMessage(true)
-        },
-        onSuccess: (context) => {
-          const hasMessage = !!context.response
-          context.editor.commands.aiGenerationSetIsLoading(false)
-          context.editor.commands.aiGenerationHasMessage(hasMessage)
-        },
-      }),
+      // Ai.configure({
+      //   appId: TIPTAP_AI_APP_ID,
+      //   token: aiToken || undefined,
+      //   autocompletion: false,
+      //   showDecorations: true,
+      //   hideDecorationsOnStreamEnd: false,
+      //   onLoading: (context) => {
+      //     context.editor.commands.aiGenerationSetIsLoading(true)
+      //     context.editor.commands.aiGenerationHasMessage(false)
+      //   },
+      //   onChunk: (context) => {
+      //     context.editor.commands.aiGenerationSetIsLoading(true)
+      //     context.editor.commands.aiGenerationHasMessage(true)
+      //   },
+      //   onSuccess: (context) => {
+      //     const hasMessage = !!context.response
+      //     context.editor.commands.aiGenerationSetIsLoading(false)
+      //     context.editor.commands.aiGenerationHasMessage(hasMessage)
+      //   },
+      // }),
     ],
   })
 
@@ -286,6 +298,7 @@ export function EditorProvider(props: EditorProviderProps) {
         {/* <NotionEditorHeader /> */}
         <EditorContentArea />
       </EditorContext.Provider>
+      {/* <CommentSidebar /> */}
     </div>
   )
 }

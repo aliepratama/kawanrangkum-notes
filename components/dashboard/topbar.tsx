@@ -152,7 +152,6 @@ export function Topbar() {
   };
 
   if (!editor) {
-    // Tampilkan versi sederhana atau kosong jika editor belum siap
     return <header className="flex h-[--header-height] shrink-0 items-center border-b"></header>;
   }
 
@@ -295,7 +294,6 @@ export function Topbar() {
             </DialogHeader>
             <div className="flex items-center gap-2">
               <RadioGroup defaultValue="many" className="w-full grid grid-cols-1 gap-4">
-                {/* Opsi 1: Few */}
                 <div className="">
                   <RadioGroupItem value="few" id="option-few" className="peer sr-only" />
                   <Label
@@ -310,7 +308,6 @@ export function Topbar() {
                   </Label>
                 </div>
 
-                {/* Opsi 2: Normal */}
                 <div>
                   <RadioGroupItem value="normal" id="option-normal" className="peer sr-only" />
                   <Label
@@ -325,7 +322,6 @@ export function Topbar() {
                   </Label>
                 </div>
 
-                {/* Opsi 3: Many */}
                 <div>
                   <RadioGroupItem value="many" id="option-many" className="peer sr-only" />
                   <Label
@@ -342,11 +338,11 @@ export function Topbar() {
               </RadioGroup>
             </div>
             <DialogFooter className="sm:justify-start">
-              <DialogClose asChild>
                 <Button type="button" variant="destructive" className="w-full bg-teal-600">
-                  Buat
+                  <Link href="/dashboard/flashcard-session" className="text-white">
+                    Buat
+                  </Link>
                 </Button>
-              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>

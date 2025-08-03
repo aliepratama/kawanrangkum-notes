@@ -1,17 +1,10 @@
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-
 import { AppSidebar } from "@/components/dashboard/app-sidebar"
-import { Topbar } from "@/components/dashboard/topbar"
-import { Separator } from "@/components/ui/separator"
-import dynamic from 'next/dynamic';
 import { NotionEditor } from '@/components/tiptap-templates/notion-like/notion-like-editor'
 
 import defaultContent from '@/components/tiptap-templates/notion-like/data/content.json'
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 export default function Page() {
